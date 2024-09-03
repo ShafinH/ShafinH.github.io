@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180: Project 1, Shafin Haque</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
+        <h2>Project 1:  Images of the Russian Empire</h2>
+        <h3>Colorizing the <a href="https://www.loc.gov/collections/prokudin-gorskii/" target="_blank">Prokudin-Gorskii</a> photo collection</h3>
+        <h4>Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">In this project, we are given <a href="https://www.loc.gov/collections/prokudin-gorskii/" target="_blank">digitized Prokudin-Gorskii glass plate images</a>, where in 1907 Sergei Mikhailovich Prokudin-Gorskii tried taking color photographs across the Russian Empire by recording three exposures of every scene onto a glass plate using a red, green and blue filter. The goal of this project is to align the red and green exposures to the blue exposure, and then using the three separate channels to create a nice color image.</p>
+    <hr>
+    <h2>Approach</h2>
+    <p class="text">We assume a simple x,y translation using the blue channel as a reference is sufficient for proper alignment. Starting with low resolution jpg files, we use an exhaustive search by searching over a window of (-15,15) pixels for the best alignment vector that maximizes the Normalized Cross-Correlation (NCC), between the blue channel and the channel we are aligning. The vectors with the highest NCC for the red and green channels are used to shift the red and green channels, and then we stack the channels for a full RGB image. Finally, we convert the images back to the RGB color space and save the results.</p>
+    <p class="text">There were two key factors I had to account for to properly align the image. First, the borders of the image had to be cropped due to signifcant artificats which hurt the process of finding the best alignment vector. Thus, I cropped the image at all sides by 10% of the image size. On top of this, for finding the max NCC between the blue channel and the channel being aligned, we can not compare the pixel values directly as RGB channels have different brightness levels. To account for this, I first normalized each exposure, and then converted the channels to their <a href="https://academy.wedio.com/luminance/" target="_blank">luminance</a> value, and then found the NCC.</p>
+    <p class="text">However, this search window is too small for the larger .tif files, and increasing the window by a large factor leads excessive computation time. To solve this, I implemented a recursive coarse to fine search using image pyramids. I set a base image width of 30 pixels and started with an alignment vector of (0,0). The method recursively downscales the image by half until the base image width is reached, and then finds the best alignment vector for the current image size. After this, the method scales the vector back up by a factor of two to account for the downscale, and then continues on the next level of recursion. This process continues until the entire image is processed. For each image size, I search over a window of (-10,10) pixels, which was found to give good results.</p>
+    <p class="text">Out of the given images, the only channel I found not align properly was the red channel for the Emir photo. I noticed if I increased the border crop, the image would properly align, however, it would negatively affect some other photos, so I left it at 10%.</p>
+    <hr>
+    <h2>Results</h2>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/cathedral.jpg" alt="Cathedral">
+            <p>Cathedral <br>R: (3, 12) <br>G: (2, 5)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/monastery.jpg" alt="Monastery">
+            <p>Monastery <br>R: (2, 3) <br>G: (2, -3)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/tobolsk.jpg" alt="Tobolsk">
+            <p>Tobolsk <br>R: (3, 6) <br>G: (3, 3)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/church.jpg" alt="Church">
+            <p>Church <br>R: (-4, 58) <br>G: (0, 25)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/harvesters.jpg" alt="Harvesters">
+            <p>Harvester <br>R: (13, 124) <br>G: (16, 60)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/icon.jpg" alt="Icon">
+            <p>Icon <br>R: (23, 89) <br>G: (17, 40)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/lady.jpg" alt="Lady">
+            <p>Lady <br>R: (10, 117) <br>G: (8, 53)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/melons.jpg" alt="Melons">
+            <p>Melons <br>R: (2, 3) <br>G: (9, 82)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/emir.jpg" alt="Emir">
+            <p>Emir <br>R: (11, 178) <br>G: (2, -3)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/onion_church.jpg" alt="Onion Church">
+            <p>Onion Church <br>R: (36, 108) <br>G: (26, 51)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/sculpture.jpg" alt="Sculpture">
+            <p>Sculpture <br>R: (-26, 140) <br>G: (-11, 33)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/self_portrait.jpg" alt="Self Portrait">
+            <p>Self Portrait <br>R: (36, 176) <br>G: (28, 78)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/three_generations.jpg" alt="Three Generations">
+            <p>Three Generations <br>R: (9, 111) <br>G: (12, 54)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/train.jpg" alt="Train">
+            <p>Train<br>R: (31, 87) <br>G: (5, 43)</p>
+        </div>
+    </div>
+</body>
+</html>
