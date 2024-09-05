@@ -79,5 +79,45 @@
             <p>Train<br>R: (31, 87) <br>G: (5, 43)</p>
         </div>
     </div>
+    <hr>
+    <h2>Bells & Whistles</h2>
+    <p class="text">For bells & whistles, I decided to try auto contrasting on the images. The idea behind auto contrasting is automatically adjusting the image so that the lightest and darkest pixels are well contrasted. A common way to do this is histogram equalization. Histogram equalization first finds the histogram of the image which represents the distribution of the pixel intensities. Then, it calculates the CDF of the histogram and maps it to a wider range by using a mapping formula. However, histogram equalization can only work on single channels. To get around this, I converted my image to the YUV color space and then ran histogram equalization on the luminance channel, then converted the image back to RGB.</p>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/icon.jpg" alt="icon">
+            <p>icon (base)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/auto_contrast/icon.jpg" alt="icon">
+            <p>icon (auto contrasted)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/onion_church.jpg" alt="onion_church">
+            <p>onion church (base)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/auto_contrast/onion_church.jpg" alt="onion_church">
+            <p>onion church (auto contrasted)</p>
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/train.jpg" alt="train">
+            <p>train (base)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/auto_contrast/train.jpg" alt="train">
+            <p>train (auto contrasted)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/melons.jpg" alt="melons">
+            <p>melons (base)</p>
+        </div>
+        <div class="image-item">
+            <img src="results/auto_contrast/melons.jpg" alt="melons">
+            <p>melons (auto contrasted)</p>
+        </div>
+    </div>
+
 </body>
 </html>
