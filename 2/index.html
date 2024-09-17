@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio: Project 2</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
+        <h2>Project 2:  Fun with Filters and Frequencies</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">The first part of this project explores filter for various tasks such as image sharpening and edge detection.
+    </p>
+    <hr>
+    <h2>Part 1</h2>
+    <h4 class="text">Finite Difference Operator</h4>
+    <p class="text">To find edges in an image I convolved dx and dy filters with an input image to find changes in the vertical and horizontal directions respectively. Becuase partial derivatives can result in positive and negative values, I normalized the pixel values to be in the standard image range while showing high mangitude values to be prominent. 2D convolution works on a single channel matrix, so I tried running the filter on individual color channels, but found that converting the image to grayscale and then doing convolution worked much better. Next, I computed the gradient magnitude image by combining the magnitudes of the two partial derivatives. Lastly, to make the edges clearer and reduce noise, I binarized the gardient mangitude by thresholding the image so any values below the threshold would be set to 0, and anything above would be 1. This causes pixels with a higher value, indiciating higher change, to be set to white.</p>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/cameraman/dx.png" alt="dx">
+            <p>dx</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/dy.png" alt="dy">
+            <p>dy</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/gradient_magnitude.png" alt="gradient magnitude">
+            <p>Gradient Magnitude</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/edges.png" alt="binarized gradient">
+            <p>Binarized Gradient Magnitude</p>
+        </div>
+    </div>
+    <h4 class="text">Derivative of Gaussian (DoG) Filter</h4>
+    <p class="text">However, as you can see, the edge detection with gradients on the original image results in noisy outputs. To prevent this, I passed the image through a low pass filter by convolving it with a gaussian blur kernel. The gaussian kernerl smooths an image by interpolating nearby values with weights given by a gaussian curve. Then, I convovled that output with the partial derivative filters above and did the same process. I found these images to have thicker edges and signifcantly less nosie due to the smoothening affect. Because convolution is an associative and commutative operation, we can combine the blurring and edge detection process into a single convolution by first convolving the gaussian kernel with the partial derivative filters, and then convolving the new filter onto the image, which gives the exact same results.</p>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/cameraman/gaussian/dx.png" alt="blurred dx">
+            <p>dx</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/gaussian/dy.png" alt="blurred dy">
+            <p>dy</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/gaussian/gradient_magnitude.png" alt="blurred gradient magnitude">
+            <p>Gradient Magnitude</p>
+        </div>
+        <div class="image-item">
+            <img src="results/cameraman/gaussian/edges.png" alt="blurred binarized gradient">
+            <p>Binarized Gradient Magnitude</p>
+        </div>
+    </div>
+    <hr>
+    <h2>Part 2</h2>
+    <h4 class="text">Image Sharpening</h4>
+    <p class="text">Filters can also allow us to sharpen images. To do so, the image is passed through a low pass filter, such as the same gaussian kernel before, and then the output is subtracted from the original image. This results in an image with only high frequencies, as the low frequences given by the low pass filter were subtracted. Then, the high frequencies are added back to the original image with a scaling facter α, resulting in the image looking sharper. To show the effectiveness of this process, a high quality image was blurred using a gaussian kernel and then resharpened.</p>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/taj.jpg" alt="original taj">
+            <p>Taj Mahal</p>
+        </div>
+        <div class="image-item">
+            <img src="results/sharpen/taj_sharp.png" alt="sharpened taj">
+            <p>Sharpened Taj Mahal</p>
+        </div>
+        
+    </div>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/landscape.jpeg" alt="original landscape photo">
+            <p>Original Photo</p>
+        </div>
+        <div class="image-item">
+            <img src="results/sharpen/landscape_sharp.png" alt="sharpened landscape">
+            <p>Sharpened Image</p>
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/sharp_photo.jpg" alt="sharp photo">
+            <p>Sharp HQ Image</p>
+        </div>
+        <div class="image-item">
+            <img src="results/sharpen/blurred_photo.png" alt="blurred photo">
+            <p>Blurred Version</p>
+        </div>
+        <div class="image-item">
+            <img src="results/sharpen/blurred_photo_resharp.png" alt="sharpened blurred photo">
+            <p>Sharpened Version (Blurred)</p>
+        </div>
+    </div>
+    
+    <hr>
+    <h2>Bells & Whistles</h2>
+    
+  
+
+</body>
+</html>
