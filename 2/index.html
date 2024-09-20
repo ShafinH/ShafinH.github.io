@@ -16,7 +16,7 @@
     <hr>
     <h2>Part 1</h2>
     <h4 class="text">Finite Difference Operator</h4>
-    <p class="text">To find edges in an image I convolved dx and dy filters with an input image to find changes in the vertical and horizontal directions respectively. Becuase partial derivatives can result in positive and negative values, I normalized the pixel values to be in the standard image range while showing high mangitude values to be prominent. 2D convolution works on a single channel matrix, so I tried running the filter on individual color channels, but found that converting the image to grayscale and then doing convolution worked much better. Next, I computed the gradient magnitude image by combining the magnitudes of the two partial derivatives. Lastly, to make the edges clearer and reduce noise, I binarized the gardient mangitude by thresholding the image so any values below the threshold would be set to 0, and anything above would be 1. This causes pixels with a higher value, indiciating higher change, to be set to white.</p>
+    <p class="text">To find edges in an image I convolved dx and dy filters with an input image to find changes in the vertical and horizontal directions respectively. Becuase partial derivatives can result in positive and negative values, I normalized the pixel values to be in the standard image range while showing high mangitude values to be prominent. 2D convolution works on a single channel matrix, so I tried running the filter on individual color channels, but found that converting the image to grayscale and then doing convolution worked much better. Next, I computed the gradient magnitude image which effectively combines the two partial derivatives by taking the square root of the sum of the two partial derivatives squared. Lastly, to make the edges clearer and reduce noise, I binarized the gardient mangitude by thresholding the image so any values below the threshold would be set to 0, and anything above would be 1. This causes pixels with a higher value, indiciating higher change, to be set to white.</p>
     <div class="image-container">
         <div class="image-item">
             <img src="results/cameraman/dx.png" alt="dx">
@@ -94,9 +94,264 @@
             <p>Sharpened Version (Blurred)</p>
         </div>
     </div>
-    
-    <hr>
-    <h2>Bells & Whistles</h2>
+
+    <h4 class="text">Hybrid Images</h4>
+    <p class="text">Hybrid images can be formed by passing two images through high and low pass filters and then averaging them. The image that undergoes a high pass transformation will be seen close up by the human eye, while the image passed through a low pass filter can be seen from much further away. We can see the result of this process by analyzing the image in the frequency domain through a Fourier transform. The Fourier analysis done at the end is for the last set of images. I also included a failure at the end where the frequencies were not able to be distinguished well.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/DerekPicture.jpg" alt="Derek">
+            <p>Image 1</p>
+        </div>
+        <div class="image-item">
+            <img src="images/nutmeg.jpg" alt="nutmeg">
+            <p>Image 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/derek_nutmeg.png" alt="hybrid image">
+            <p>Hybrid</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/swing1.png" alt="Top of Back Swing">
+            <p>Image 1</p>
+        </div>
+        <div class="image-item">
+            <img src="images/swing2.png" alt="Ball hit">
+            <p>Image 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/tiger.png" alt="hybrid image">
+            <p>Hybrid</p>
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/rdj.jpeg" alt="Chris Evans">
+            <p>Image 1</p>
+        </div>
+        <div class="image-item">
+            <img src="images/chris.png" alt="Robert Downey Jr.">
+            <p>Image 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/chris_rdj.png" alt="hybrid image">
+            <p>Hybrid</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/hybrid/image_1_lowpass_fourier.png" alt="Low Pass Fourier">
+            <p>Low-pass Fourier</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/image_2_highpass_fourier.png" alt="High Pass fourier">
+            <p>High-pass Fourier</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/chris_rdj_fourier.png" alt="hybrid image fourier">
+            <p>Hybrid Fourier</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/tiger.jpg" alt="Low Pass Fourier">
+            <p>Tiger</p>
+        </div>
+        <div class="image-item">
+            <img src="images/lion.jpg" alt="High Pass fourier">
+            <p>Lion</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hybrid/tiger-lion.png" alt="hybrid image fourier">
+            <p>Failed Hybrid</p>
+        </div>
+    </div>
+
+    <h4 class="text">Gaussian and Laplacian Stacks</h4>
+
+    <p class="text">To effectively blend two images, gaussian and laplacian stacks help through the blending of images at various resolutions. I first construct a gaussian stack which simply keeps an image the same spatial dimensions but progressively applies a gaussian kernel to blur it at multiple levels. The laplacian stack of an image is calculated by subtracting the next image in the guassian stack from the current level in the gaussian stack, and using the last image in the gaussian stack as the last in the laplacian. The first row is the apple laplacian stack, the second is the orange, and third is combined with the mask.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/apple-stack-0.png" alt="Apple Laplacian Stack Level 0">
+            <p>Level 0</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/apple-stack-2.png" alt="Apple Laplacian Stack Level 2">
+            <p>Level 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/apple-stack-4.png" alt="Apple Laplacian Stack Level 3">
+            <p>Level 4</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/orange-stack-0.png" alt="Orange Laplacian Stack Level 0">
+            <p>Level 0</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/orange-stack-2.png" alt="Orange Laplacian Stack Level 2">
+            <p>Level 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/orange-stack-4.png" alt="Apple Laplacian Stack Level 3">
+            <p>Level 4</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/apple-orange-0.png" alt="Combined Laplacian Stack Level 0">
+            <p>Level 0</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/apple-orange-2.png" alt="Combined Laplacian Stack Level 2">
+            <p>Level 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/apple-orange-4.png" alt="Combined Laplacian Stack Level 3">
+            <p>Level 4</p>
+        </div>
+    </div>
+
+    <h4 class="text">Multiresolution Blending</h4>
+
+    <p class="text">With the code from the previous section, we can now easily blend images by simply adding all the images in the stack from the mask and the laplacian stacks of the two images. With a gaussian stack of the mask, I multiply the mask by the first image, and multiply the opposing mask to the second image at each layer, and then sum across all the images.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/apple.jpeg" alt="Apple">
+            <p>Apple</p>
+        </div>
+        <div class="image-item">
+            <img src="images/orange.jpeg" alt="Orange">
+            <p>Orange</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/orange-apple.png" alt="Oraple">
+            <p>Oraple</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/sunset.jpg" alt="Sunset">
+            <p>Sunset</p>
+        </div>
+        <div class="image-item">
+            <img src="images/beach.jpg" alt="Beach">
+            <p>Beach</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/mask.png" alt="Beach">
+            <p>Mask</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/sunset-beach.png" alt="Sunset Beach Blend">
+            <p>Result</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/moon.jpg" alt="Sunset">
+            <p>Moon</p>
+        </div>
+        <div class="image-item">
+            <img src="images/skyline.jpg" alt="Beach">
+            <p>Skyline</p>
+        </div>
+        <div class="image-item">
+            <img src="images/moon-mask.png" alt="Beach">
+            <p>Mask</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-skyline.png" alt="Sunset Beach Blend">
+            <p>Result</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/moon-stack-0.png" alt="Sunset">
+            <p>Moon Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-stack-1.png" alt="Sunset">
+            <p>Moon Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-stack-2.png" alt="Sunset">
+            <p>Moon Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-stack-3.png" alt="Sunset">
+            <p>Moon Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-stack-4.png" alt="Sunset">
+            <p>Moon Laplacian Stack</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/skyline-stack-0.png" alt="Sunset">
+            <p>Skyline Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/skyline-stack-1.png" alt="Sunset">
+            <p>Skyline Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/skyline-stack-2.png" alt="Sunset">
+            <p>Skyline Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/skyline-stack-3.png" alt="Sunset">
+            <p>Skyline Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/skyline-stack-4.png" alt="Sunset">
+            <p>Skyline Laplacian Stack</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/stack/moon-skyline-0.png" alt="Sunset">
+            <p>Combined Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-skyline-1.png" alt="Sunset">
+            <p>Combined Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-skyline-2.png" alt="Sunset">
+            <p>Combined Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-skyline-3.png" alt="Sunset">
+            <p>Combined Laplacian Stack</p>
+        </div>
+        <div class="image-item">
+            <img src="results/stack/moon-skyline-4.png" alt="Sunset">
+            <p>Combined Laplacian Stack</p>
+        </div>
+    </div>
+
+
+    <h4 class="text">Bells & Whistles</h4>
+    <p class="text">Did multi-resolution blending in color</p>
     
   
 
