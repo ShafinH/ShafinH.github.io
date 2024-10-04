@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio: Project 3</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
+        <h2>Project 3: Face Morping</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">In this project, I produced an animation of morphing my face into someone else's, computed the mean of a population of faces and extrapolated it to create a caricature of myself.</p>
+    <hr>
+    <h2>Mid-Way Face</h2>
+    <p class="text">Before the morphing animation, I first generated the midway face between two faces. I did this by first finding correspondence points between the two images and finding the average of these points. I then calculated a Delaunay triangulation using the average points and found an affine transformation to go from the two original set of points to the average. I solved for the affine transformation by solving a least squares problem to map the first set of coordinates to the average. From there, I found the inverse warp by simply inverting the affine warp to go from the average points back to the original two images, and applied both of the inverse warps to the average triangles. I then used an interpolation method to get the pixel values from the original images and averaged these values to get a final, mid-way image.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/image1_triangulation.png" alt="">
+            <p>Image A Triangulation</p>
+        </div>
+        <div class="image-item">
+            <img src="results/image2_triangulation.png" alt="">
+            <p>Image B Triangulation</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/image1.png" alt="Image 1">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/image2.png" alt="Image 2">
+            <p>Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/average_image.png" alt="Mid Way Image">
+            <p>Mid-Way</p>
+        </div>
+    </div>
+
+    <h2>Morph Sequence</h2>
+    <p class="text">I then produced the morph sequence by weighting the color and correspondence point averages by a time variable. Rather than multiply each shape and color by 0.5 like for the mid-way image, I multiplied the first image's color and shape by (1-t), and the second image's by t. I used a total of 45 steps, equally weighted from 0 to 1, and saved my video at 15 frames per second.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/morph_video.gif" alt="Morph Sequence">
+        </div>
+    </div>
+
+    <h2>Mean Population</h2>
+
+    <p class="text">In this part of the project, I computed the average shape of faces from <a href="http://fei.edu.br/~cet/facedatabase.html">this</a> dataset. I then morphed some of the images to this average shape, and then warped my face into this average shape, and the average face warped into my geometry. From the dataset, I chose only the men, and each subject had a smiling and non-smiling photo, and I filtered only the non-smiling photos for consistency</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/mean_population_image.png" alt="Mean Population Image">
+            Mean Population Image
+        </div>
+        <div class="image-item">
+            <img src="results/warped_56a.jpg" alt="">
+            Example Warped to Mean
+        </div>
+        <div class="image-item">
+            <img src="results/warped_7a.jpg" alt="">
+            Example Warped to Mean
+        </div>
+        <div class="image-item">
+            <img src="results/warped_83a.jpg" alt="">
+            Example Warped to Mean
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/me_260_360.png">
+            My Face
+        </div>
+        <div class="image-item">
+            <img src="results/mean_population_image.png" alt="">
+            Mean Face
+        </div>
+        <div class="image-item">
+            <img src="results/warped_my_image.png" alt="">
+            Warped to Mean Face Geometry
+        </div>
+        <div class="image-item">
+            <img src="results/warped_avg_face_to_my_geometry.png" alt="">
+            Warped to My Face Geometry
+        </div>
+    </div>
+
+    <h2>Caricature</h2>
+
+    <p class="text">I created a caricature of myself by extrapolating my face to the mean face. I did this by weighting my correspondence points and the average corresponding points by numbers greater than 1 and less than 0.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/caricature_image.png" alt="">
+            α = -0.5
+        </div>
+    </div>
+
+    <h2>Bells & Whistles</h2>
+
+    <p class="text">Using the average image of a chinese male from online, I tried warping only my geoemtry to it, only the color appearance, and both. Because the images were not well aligned, the geometry is not that great, however, you can see by only dissolving the color it keeps my gemoetry well but morphs the color from the average picture well. Warping and dissolving produced decent results.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/me_394_540.png" alt="">
+            My face
+        </div>
+        <div class="image-item">
+            <img src="images/avg_asian_male.jpeg" alt="">
+            Average Chinese Male
+        </div>
+        <div class="image-item">
+            <img src="results/warped_geometry_image.png" alt="">
+            Only Warp Geometry
+        </div>
+        <div class="image-item">
+            <img src="results/warped_color_image.png" alt="">
+            Only Dissolve Color
+        </div>
+        <div class="image-item">
+            <img src="results/warped_both_image.png" alt="">
+            Both
+        </div>
+    </div>
+    
+
+</body>
+</html>
