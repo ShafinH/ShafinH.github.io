@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio: Project 4</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
+        <h2>Project 4: (Auto) stitching and Photo Mosaics</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">In this project, I produced image mosaics by registering, warping, and resampling images.</p>
+    <hr>
+
+    <h2>Correspondence</h2>
+    <p class="text"> This is an example of the correspondence points for a pair of images that were used to generate a homography matrix.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/imageA_with_points.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="results/imageB_with_points.png" alt="">
+            <p>Image B</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Homographies and Warping</h2>
+    <p class="text">To generate the homography matrix for warping the images, I solved an over-contstrained least squares problem using the correspondence points from the two images which maps the coordinate points from the space of imageB to imageA's. Then, I wrote a warp function which takes in the image and the homography matrix and finds the homogenous points in the warped space, then using the inverse of the warp matrix, warps the points back into the original image's space, and uses an interpolation function to get the pixel values from that image.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/least-squares.png" alt="">
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Image Rectification</h2>
+    <p class="text">To test my homography and warping methods, I rectified images for known rectangular objects, giving a top down view of them. I took the corner points of the rectangular object in the images and warped them to coordinate points of a rectangle which causes the image to be warped as if the object was being looked at from top-down.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/image_rectify.png" alt="">
+            <p>Image 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/image_rectified.png" alt="">
+            <p>Image 1 Rectified</p>
+        </div>
+
+        <div class="image-item">
+            <img src="images/image_rectify2.png" alt="">
+            <p>Image 2</p>
+        </div>
+        <div class="image-item">
+            <img src="results/image_rectified2.png" alt="">
+            <p>Image 2 Rectified</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Mosaic Blending</h2>
+
+    <p class="text">
+        Now, to create a mosaic I first warped imageB to imageA using the method explained above which aligns the two images. Then, I created a large mosaic canvas to fit both images by placing the warped imageB onto the mosaic and blending it with imageA in the regions they overlap. To blend the images, I used a laplacian pyramid along with an alpha blending mask that transitions from 1 to 0 from the middle half of the overlapping areas. This removes the high frequency ghosting which occured when trying to blend solely with the alpha mask.
+    </p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/imageA.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/imageB.png" alt="">
+            <p>Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic.png" alt="">
+            <p>Mosaic</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/imageA1.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/imageB1.png" alt="">
+            <p>Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic1.png" alt="">
+            <p>Mosaic</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/imageA2.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/imageB2.png" alt="">
+            <p>Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic2.png" alt="">
+            <p>Mosaic</p>
+        </div>
+    </div>
+
+
+   
+    
+
+</body>
+</html>
