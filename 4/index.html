@@ -6,16 +6,17 @@
 <body>
     <div class="header">
         <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
-        <h2>Project 4: (Auto) stitching and Photo Mosaics</h2>
+        <h2>Project 4: (Auto) Stitching and Photo Mosaics</h2>
         <h4 style="text-align: center;">Shafin Haque</h4>
     </div>
     <hr>
     <h2>Overview</h2>
-    <p class="text">In this project, I produced image mosaics by registering, warping, and resampling images.</p>
+    <p class="text">In this project, I produced image mosaics through registering, warping, and resampling and implemented feature matching for autostiching.</p>
     <hr>
 
-    <h2>Correspondence</h2>
-    <p class="text"> This is an example of the correspondence points for a pair of images that were used to generate a homography matrix.</p>
+    <h2>Image Warping and Mosaicing</h2>
+    <h4 class="text">Hand-Picked Correspondence</h4>
+    <p class="text"> This is an example of the correspondence points picked by hand for a pair of images that were used to generate a homography matrix.</p>
 
     <div class="image-container">
         <div class="image-item">
@@ -30,7 +31,7 @@
 
     <hr>
 
-    <h2>Homographies and Warping</h2>
+    <h4 class="text">Homographies and Warping</h4>
     <p class="text">To generate the homography matrix for warping the images, I solved an over-contstrained least squares problem using the correspondence points from the two images which maps the coordinate points from the space of imageB to imageA's. Then, I wrote a warp function which takes in the image and the homography matrix and finds the homogenous points in the warped space, then using the inverse of the warp matrix, warps the points back into the original image's space, and uses an interpolation function to get the pixel values from that image.</p>
 
     <div class="image-container">
@@ -41,7 +42,7 @@
 
     <hr>
 
-    <h2>Image Rectification</h2>
+    <h4 class="text">Image Rectification</h4>
     <p class="text">To test my homography and warping methods, I rectified images for known rectangular objects, giving a top down view of them. I took the corner points of the rectangular object in the images and warped them to coordinate points of a rectangle which causes the image to be warped as if the object was being looked at from top-down.</p>
 
     <div class="image-container">
@@ -66,7 +67,7 @@
 
     <hr>
 
-    <h2>Mosaic Blending</h2>
+    <h4 class="text">Mosaic Blending</h4>
 
     <p class="text">
         Now, to create a mosaic I first warped imageB to imageA using the method explained above which aligns the two images. Then, I created a large mosaic canvas to fit both images by placing the warped imageB onto the mosaic and blending it with imageA in the regions they overlap. To blend the images, I used a laplacian pyramid along with an alpha blending mask that transitions from 1 to 0 from the middle half of the overlapping areas. This removes the high frequency ghosting which occured when trying to blend solely with the alpha mask.
@@ -117,9 +118,100 @@
         </div>
     </div>
 
+    <h2>Feature Matching for Autostitching</h2>
 
-   
-    
+
+    <h4 class="text">Harris Interest Points</h4>
+
+    <p class="text">First, corners were automatically chosen following the harris interest point detector method for both images. This method computes a 'cornerness' value for each pixel based on a matrix multiplication of the image and a matrix involving the directional gradients, and is then thresholded to get corners.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/imageA_harris_corners.png" alt="">
+            <p>Image A Harris Corners</p>
+        </div>
+        <div class="image-item">
+            <img src="results/imageB_harris_corners.png" alt="">
+            <p>Image B Harris Corners</p>
+        </div>
+    </div>
+
+    <h4 class="text">Adaptive Non-Maximal Supression</h4>
+
+    <p class="text">However, as you can see, there are still too many harris corners to efficiently process. Thus, adaptive nms is implemented to reduce redunant corners. This is done by iterating over each corner, and finding the nearest corner to that corner in which the other corner has a value that is signifcantly larger than its own, which is set by x_i < c_robustness * x_j, where x_i is the current corner, x_j are all other corners, and c_robustness is set to 0.9. Then, the corners with the largest distance to another corner which meets the threshold are selected. I set the number of corners to be 500.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/imageA_nms_corners.png" alt="">
+            <p>Image A Adaptive NMS</p>
+        </div>
+        <div class="image-item">
+            <img src="results/imageB_nms_corners.png" alt="">
+            <p>Image B Apdative NMS</p>
+        </div>
+    </div>
+
+    <h4 class="text">Feature Matching</h4>
+
+    <p class="text">Now, matching corners need to be filtered which is done by feature matching. First, features are extracted from each image by selecting a 40x40 patch centered around each corner, resizing it to 8x8, normalizing it by subtracting the mean and dividing by the standard deviation to account for differences in intensity, and flattening it. Then, for each feature in imageA, its error with all features in imageB are calculated. If the ratio of the two lowest errors are below a lowe threshold, which is set to 0.5, then the lowest error feature from imageB is chosen as a match for that corresponding feature in imageA. All corners still remaining are shown.</p>
+
+    <div class="image-container"><
+        <div class="image-item">
+            <img src="results/imageA_matches.png" alt="">
+            <p>Image A Matched Features</p>
+        </div>
+        <div class="image-item">
+            <img src="results/imageB_matches.png" alt="">
+            <p>Image B Matched Features</p>
+        </div>
+    </div>
+
+    <h4 class="text">RANSAC</h4>
+
+    <p class="text">However, there are still some points that do not properly match across images or may not be great correspondence points. These outliers signifcantly hurt least squares problems, which is how our homography matrix is calculated, and thus another algorithm must be used to solve this. Thus, I implemented RANSAC which for n (1000) interations, randomly selects 4 points of corresopnding points and calculates an exact homography matrix and calculated the amount of inliers for that selection. Inliers were chosen as points that were warped from their corresponding points in imageB to within 1 pixel (epsilon threshold) of their matched point in imageA, which was from the previous feature matcher. Then, for the selection with the most inliers, the inliers were added to the 4 points and an over-constrained homograhphy matrix was calculated, and warping and blending was done the same as before. Side-by-side results of hand-picked correspondence to the automatic process are shown.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/ransac_inliers.png" alt="">
+            <p>Inliers Selected from RANSAC</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/mosaic.png" alt="">
+            <p>Hand-Picked Correspondence Mosaic</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic_ransac.png" alt="">
+            <p>Automatic Mosaic</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/mosaic1.png" alt="">
+            <p>Hand-Picked Correspondence Mosaic</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic_ransac1.png" alt="">
+            <p>Automatic Mosaic</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/mosaic2.png" alt="">
+            <p>Hand-Picked Correspondence Mosaic</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic_ransac2.png" alt="">
+            <p>Automatic Mosaic</p>
+        </div>
+    </div>
+
+    <p class="text">It seems as though feature matching and RANSAC leads to better results and less ghosting. This is probably because it was hard to find great points in the image that I could match up perfectly by hand, and the automatic method removed some ghosting artifacts seen in the hand-picked method. The coolest thing I learned from this project definitely everything on image warping and how to project an image into the plane of another's given that they were taken from the same center of project. I also enjoyed reading the MOPS paper and implementing the automatic feature matching and implementing RANSAC, and algorithm I have heard a lot about before but have never dived deeply into how it worked.</p>
+
 
 </body>
 </html>
