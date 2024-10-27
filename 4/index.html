@@ -54,7 +54,9 @@
             <img src="results/image_rectified.png" alt="">
             <p>Image 1 Rectified</p>
         </div>
+    </div>
 
+    <div class="image-container">
         <div class="image-item">
             <img src="images/image_rectify2.png" alt="">
             <p>Image 2</p>
@@ -211,6 +213,44 @@
     </div>
 
     <p class="text">It seems as though feature matching and RANSAC leads to better results and less ghosting. This is probably because it was hard to find great points in the image that I could match up perfectly by hand, and the automatic method removed some ghosting artifacts seen in the hand-picked method. The coolest thing I learned from this project definitely everything on image warping and how to project an image into the plane of another's given that they were taken from the same center of project. I also enjoyed reading the MOPS paper and implementing the automatic feature matching and implementing RANSAC, and algorithm I have heard a lot about before but have never dived deeply into how it worked.</p>
+
+    <h2>Bells & Whistles</h2>
+
+    <h4 class="text">Rotational Invariance</h4>
+
+    <p class="text">
+        Following the MOPS paper, I implemented the auto stitching which is rotationally invariant. This was done by smoothening the image patch with a gaussian, finding a gradient orientation matrix by taking the arctan between the dy and dx gradients, calculating a 2D rotational matrix based on the calculated angles, and then rotating the patch using this matrix and an affine warp, then doing the same process as before from there.
+    </p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/imageA2.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/imageB2_rotated.png" alt="">
+            <p>Rotated Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic_ransac2_rotation.png" alt="">
+            <p>Mosaic</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/imageA1.png" alt="">
+            <p>Image A</p>
+        </div>
+        <div class="image-item">
+            <img src="images/imageB1_rotated.png" alt="">
+            <p>Rotated Image B</p>
+        </div>
+        <div class="image-item">
+            <img src="results/mosaic_ransac1_rotation.png" alt="">
+            <p>Mosaic</p>
+        </div>
+    </div>
 
 
 </body>
