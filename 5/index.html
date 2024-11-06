@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio: Project </title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>CS180: Intro to Computer Vision and Computational Photography</h1>
+        <h2>Project 5: Diffusion Models</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">In this project, I experimented with pre-trained diffusion models, implemented sampling loops, and used diffusion models for inpainting and creating optical illusions.</p>
+    <hr>
+
+    <h2>Part A</h2>
+
+    <h4 class="text">Pre-Computed Text Embeddings</h4>
+
+    <p class="text">Using pre-computed Text Embeddings, I generated images using the following captions with the <a href="https://huggingface.co/docs/diffusers/api/pipelines/deepfloyd_if">DeepFloyd IF</a> model. I used random seed 12345 for the generations. The model's generations are quite good and adhere very well to what the prompt said which were added given their pre-computed text embeddings.</p>
+
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/50_steps.png" alt="">
+            <p>50 Inference Steps</p>
+        </div>
+
+        <div class="image-item">
+            <img src="images/20_steps.png" alt="">
+            <p>20 Inference Steps</p>
+        </div>
+    </div>
+
+    <h4 class="text">Sampling Loops</h4>
+
+    <p class="text">To get a noisy image, the sampling noise loop was implemented using the following equations, which scale and add noise to an image.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/campanile.png" height="200px" width="200px">
+            <p>Original Image</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_250.png" width="200px" height="200px">
+            <p>Noise t=250</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_500.png" width="200px" height="200px">
+            <p>Noise t=500</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_750.png" width="200px" height="200px">
+            <p>Noise t=750</p>
+        </div>
+    </div>
+
+    <h4 class="text">Classical Denoising</h4>
+
+    <p class="text">An attempt to denoise the images with gaussian blur filtering is shown, however, the results are quite poor, which is why more complex methods are necessary.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/campanile_noise_250.png" width="200px" height="200px">
+            <p>Noise t=250</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_500.png" width="200px" height="200px">
+            <p>Noise t=500</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_750.png" width="200px" height="200px">
+            <p>Noise t=750</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/campanile_denoised_blur_250.png"200px" height="200px">
+            <p>Denoise t=250</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_denoised_blur_500.png" width="200px" height="200px">
+            <p>Denoise t=500</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_denoised_blur_750.png" width="200px" height="200px">
+            <p>Denoise t=750</p>
+        </div>
+    </div>
+
+    <h4 class="text">One-Step Denoising</h4>
+
+    <p class="text">Given the pre-trained DeepFloyd model, one-step denoising was attempted by estimating the noise from the model given the timestamp, and getting the original image by solving the noise equation for x0. For noise closer to 0, the one-step denoising is better, but images closer to T=1000, the model does much worse. Even though DeepFloyd is trained on an extremely large dataset of x_t and x_0 pairs, one step denoising is not enough to generate high quality images.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/campanile_noise_250.png" width="200px" height="200px">
+            <p>Noise t=250</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_500.png" width="200px" height="200px">
+            <p>Noise t=500</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_noise_750.png" width="200px" height="200px">
+            <p>Noise t=750</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/campanile_denoised_250.png"200px" height="200px">
+            <p>One-step Denoise t=250</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_denoised_500.png" width="200px" height="200px">
+            <p>One-step Denoise t=500</p>
+        </div>
+        <div class="image-item">
+            <img src="results/campanile_denoised_750.png" width="200px" height="200px">
+            <p>One-step Denoise t=750</p>
+        </div>
+    </div>
+
+    <h4 class="text">Iterative Denoising</h4>
+
+    <p class="text">Now, the denoising is done iteratively, rather than in one step, from the noisy image to t=0, a clean image. This is done by following equations 6 and 7 from the <a href="https://arxiv.org/pdf/2006.11239">DDPM Paper</a>. However, because iteratively denoising from t=1000 all the way to 0 requires too much compute, the process is streamlined by striding the timesteps by a factor of 30, starting from 990 and going down to 0. The iterative method interpolates between the estimated clean image and noise, and takes the output from the noiser timestep, and iteratively denoises it until the time reaches 0. The prompt is specified as "a high quality photo", essentially representing a null prompt. The denoising is also started at timestep 690, rather than 1000, to try and help recreate the image rather than generate a random one.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs1.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/campanile.png" width="200px" height="200px">
+            <p>Original</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/clean.png" width="200px" height="200px">
+            <p>Iteratively Denoised</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/campanile_one_step.png" width="200px" height="200px">
+            <p>One-step Denoised</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/campanile_denoise_blur_1.4.png" width="200px" height="200px">
+            <p>Gaussian Blurred</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.4/690.png" width="200px" height="200px">
+            <p>t=690</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/540.png" width="200px" height="200px">
+            <p>t=540</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/390.png" width="200px" height="200px">
+            <p>t=390</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/240.png" width="200px" height="200px">
+            <p>t=240</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.4/90.png" width="200px" height="200px">
+            <p>t=90</p>
+        </div>
+
+    </div>
+
+    <h4 class="text">Diffusion Model Sampling</h4>
+    <p class="text">Now, images are generated from scratch by starting with random noise and starting with i_start=0 so that the timestep starts at the max and goes down to 0. Here are 5 images generated with the prompt as "a high quality photo".</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.5/generated_0.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.5/generated_1.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.5/generated_2.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.5/generated_3.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.5/generated_4.png" width="200px" height="200px">
+        </div>
+    </div>
+
+    <h4 class="text">Classifier-Free Guidance (CFG)</h4>
+
+    <p class="text">To improve image quality, while losing some image diversity, guidance is introduced. This is done by introducing an unconditional noise estimate, which is the model's prediction of noise with a true null text prompt and changing the actual noise estimate to follow the follow equation, where the gamma is set to 7. In this case, if gamma is 0, the noise estimate is simply the unconditional prediction, if it is 1 it is only the conditional, but when it is greater than 1, guidence is introduced.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs2.png">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.6/generated_0.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.6/generated_1.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.6/generated_2.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.6/generated_3.png" width="200px" height="200px">
+        </div>
+        <div class="image-item">
+            <img src="results/1.6/generated_4.png" width="200px" height="200px">
+        </div>
+    </div>
+
+    <h4 class="text">Image-to-Image Translation</h4>
+
+    <p class="text">Image-to-Image translation can be done by putting the image through the noise schedule, but changing the initial noise step that denoising is started from. The closer denoising starts to the original image, the more similar it will be to the original image which is noised. Denoising is done with the iterative CFG method.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.7/generated_1.png" width="200px" height="200px">
+            <p>i_start = 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7/generated_3.png" width="200px" height="200px">
+            <p>i_start = 3</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7/generated_5.png" width="200px" height="200px">
+            <p>i_start = 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7/generated_7.png" width="200px" height="200px">
+            <p>i_start = 7</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7/generated_10.png" width="200px" height="200px">
+            <p>i_start = 10</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7/generated_20.png" width="200px" height="200px">
+            <p>i_start = 20</p>
+        </div>
+        <div class="image-item">
+            <img src="images/campanile.png" width="200px" height="200px">
+            <p>Campanile</p>
+        </div>
+    </div>
+
+    <h4 class="text">Image Editing</h4>
+
+    <p class="text">Using the same process as above, image editing of both images from online and images hand-drawn can be done.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.7.1/1_web_1.png" width="200px" height="200px">
+            <p>i_start = 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/3_web_1.png" width="200px" height="200px">
+            <p>i_start = 3</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/5_web_1.png" width="200px" height="200px">
+            <p>i_start = 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/7_web_1.png" width="200px" height="200px">
+            <p>i_start = 7</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/10_web_1.png" width="200px" height="200px">
+            <p>i_start = 10</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/20_web_1.png" width="200px" height="200px">
+            <p>i_start = 20</p>
+        </div>
+        <div class="image-item">
+            <img src="images/car.png" width="200px" height="200px">
+            <p>Web Image 1</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.7.1/1_web_2.png" width="200px" height="200px">
+            <p>i_start = 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/3_web_2.png" width="200px" height="200px">
+            <p>i_start = 3</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/5_web_2.png" width="200px" height="200px">
+            <p>i_start = 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/7_web_2.png" width="200px" height="200px">
+            <p>i_start = 7</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/10_web_2.png" width="200px" height="200px">
+            <p>i_start = 10</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/20_web_2.png" width="200px" height="200px">
+            <p>i_start = 20</p>
+        </div>
+        <div class="image-item">
+            <img src="images/house.png" width="200px" height="200px">
+            <p>Web Image 2</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.7.1/1_hand.png" width="200px" height="200px">
+            <p>i_start = 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/3_hand.png" width="200px" height="200px">
+            <p>i_start = 3</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/5_hand.png" width="200px" height="200px">
+            <p>i_start = 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/7_hand.png" width="200px" height="200px">
+            <p>i_start = 7</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/10_hand.png" width="200px" height="200px">
+            <p>i_start = 10</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.1/20_hand.png" width="200px" height="200px">
+            <p>i_start = 20</p>
+        </div>
+        <div class="image-item">
+            <img src="images/hand-drawn.png" width="200px" height="200px">
+            <p>Hand Drawn Image</p>
+        </div>
+    </div>
+
+    <h4 class="text">Image Inpainting</h4>
+
+    <p class="text">Image inpainting can be performed by using a mask and denoising a random noise sample within the mask. First, denoise the entire image, and then set everything outisde of the mask to be the original image with the noise schedule at that given time step.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs3.png" alt="">
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/campanile.png" width="200px" height="200px">
+            <p>Campanile</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/mask_camp.png" width="200px" height="200px">
+            <p>Mask</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/replace_camp.png" width="200px" height="200px">
+            <p>Replace</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/campanile.png" width="200px" height="200px">
+            <p>Inpainted</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/ben.png" width="200px" height="200px">
+            <p>Big Ben</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/mask_ben.png" width="200px" height="200px">
+            <p>Mask</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/replace_ben.png" width="200px" height="200px">
+            <p>Replace</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/ben.png" width="200px" height="200px">
+            <p>Inpainted</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/amalfi.png" width="200px" height="200px">
+            <p>Amalfi Coast</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/mask_amalfi.png" width="200px" height="200px">
+            <p>Mask</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/replace_amalfi.png" width="200px" height="200px">
+            <p>Replace</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.2/amalfi.png" width="200px" height="200px">
+            <p>Inpainted</p>
+        </div>
+    </div>
+
+    <h4 class="text">Text Conditional Image-to-Image Translation</h4>
+
+    <p class="text">Using the same process as the previous image-to-image translation, the conditional denoising can be based on a specific text prompt, rather than a general prompt. This conditioning was based on "A rocket ship".</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.7.3/1_camp.png" width="200px" height="200px">
+            <p>i_start = 1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.3/3_camp.png" width="200px" height="200px">
+            <p>i_start = 3</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.3/5_camp.png" width="200px" height="200px">
+            <p>i_start = 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.3/7_camp.png" width="200px" height="200px">
+            <p>i_start = 7</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.3/10_camp.png" width="200px" height="200px">
+            <p>i_start = 10</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.7.3/20_camp.png" width="200px" height="200px">
+            <p>i_start = 20</p>
+        </div>
+        <div class="image-item">
+            <img src="images/campanile.png" width="200px" height="200px">
+            <p>Campanile</p>
+        </div>
+    </div>
+
+    <h4 class="text">Visual Anagrams (Optical Illusion)</h4>
+
+    <p class="text">
+        With the pre-trained diffusion model, <a href="https://dangeng.github.io/visual_anagrams/">Visual Anagrams</a> can be implemented by using two different conditional text prompts and averaging the flipped noise estimate for one. Each row is the same image where the image on the right is the left image flipped.
+    </p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs4.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.8/campfire.png" width="200px" height="200px">
+            <p>An oil painting of people around a campfire</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.8/man.png" width="200px" height="200px">
+            <p>An oil painting of an old man</p>
+        </div>
+
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.8/mountain.png" width="200px" height="200px">
+            <p>An oil painting of a snowy mountain village</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.8/hat.png" width="200px" height="200px">
+            <p>A man wearing a hat</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.8/barista.png" width="200px" height="200px">
+            <p>A photo of a hipster barista</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.8/hat2.png" width="200px" height="200px">
+            <p>A man wearing a hat</p>
+        </div>
+    </div>
+
+    <h4 class="text">Hybrid Images</h4>
+
+    <p class="text">Using a similar idea as the visual anagrams, hybrid images can be generated which will seem like a photo of something from close up, but something different from further away. This is done by following the algorithm below with high and low pass filters</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/eqs5.png" alt="">
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/1.9/skull_waterfall.png" width="200px" height="200px">
+            <p>Hybrid image of a skull and waterfall</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.9/waterfall_man.png" width="200px" height="200px">
+            <p>Hybrid image of waterfall and a man</p>
+        </div>
+        <div class="image-item">
+            <img src="results/1.9/village_dog.png" width="200px" height="200px">
+            <p>Hybrid image of a snowy mountain village and dog</p>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+</html>
