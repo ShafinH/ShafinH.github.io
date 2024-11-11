@@ -539,9 +539,305 @@
         </div>
     </div>
 
+    <h2>Diffusion Models from Sctratch</h2>
+
+    <h4 class="text">Unconditional U-Net</h4>
+    <p class="text">First, I implemented an unconditional U-Net based on the following architecture to denoise data in a single step.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/unet.png" alt="">
+        </div>
+    </div>
+
+    <h4 class="text">Data Visualization</h4>
+
+    <p class="text">Dataset along with various sigma values for adding noise to the image.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/examples/0_image_0.0.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/0_image_0.2.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/0_image_0.4.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/0_image_0.6.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/0_image_0.8.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/examples/1_image_0.0.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/1_image_0.2.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/1_image_0.4.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/1_image_0.6.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/1_image_0.8.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/examples/2_image_0.0.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/2_image_0.2.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/2_image_0.4.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/2_image_0.6.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/2_image_0.8.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/examples/3_image_0.0.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/3_image_0.2.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/3_image_0.4.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/3_image_0.6.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/examples/3_image_0.8.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+    </div>
 
 
+    <h4 class="text">Training</h4>
 
+    <p class="text">The hyperparameters for training the model are as follows: 
+        <ul>
+            <li>hidden size: 128</li>
+            <li>Batch size: 256</li>
+            <li>Epochs: 5</li>
+            <li>Learning Rate: 1e-4</li>
+            <li>Sigma (noise): 0.5</li>
+        </ul>
+    </p>
+    
+    <p class="text">Here are the model results on the test set after the first and last epochs at varying sigma values for image noise.</p>
 
+    <p class="text">After Epoch 1</p>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.0_noise.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.2_noise.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.4_noise.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.6_noise.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.8_noise.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.8_noise.png" width="200px" height="200px">
+            <p>sigma = 1.0 </p>
+        </div>
+
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.2_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.4_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.6_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_0.8_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/0_0_1.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+    </div>
+
+    <p class="text">After Epoch 5</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.0_noise.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.2_noise.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.4_noise.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.6_noise.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.8_noise.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_1.0_noise.png" width="200px" height="200px">
+            <p>sigma = 1.0 </p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.2_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.4_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.6_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_0.8_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_0_1.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+    </div>
+
+    <p class="text">Fully Trained</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.0_noise.png" width="200px" height="200px">
+            <p>sigma = 0.0 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.2_noise.png" width="200px" height="200px">
+            <p>sigma = 0.2 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.4_noise.png" width="200px" height="200px">
+            <p>sigma = 0.4 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.6_noise.png" width="200px" height="200px">
+            <p>sigma = 0.6 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.8_noise.png" width="200px" height="200px">
+            <p>sigma = 0.8 </p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_1.0_noise.png" width="200px" height="200px">
+            <p>sigma = 1.0 </p>
+        </div>
+
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.2_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.4_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.6_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_0.8_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/1.4/4_1_1.0_denoise.png" width="200px" height="200px">
+            <p>Output</p>
+        </div>
+    </div>
+
+    <p class="text">Training Loss Curve</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/training_curve.png" alt="">
+        </div>
+    </div>
+
+    
 </body>
 </html>
