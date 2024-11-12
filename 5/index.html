@@ -838,6 +838,78 @@
         </div>
     </div>
 
+    <h4 class="text">Time Conditioned UNet</h4>
+
+    <p class="text">To iteratively denoise an image from pure noise, the UNet can be conditioned on a time variable. Then, following the two algorithms from the DDPM paper, we can train our model to iteratively denoise pure noise to ground truth images, and then run inference by following the sampling algorthm. Here is the training curve as well as results for generation from pure noise from training the model after the 5th and 20th epoch.</p>
+    
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/alg1.png" alt="">
+        </div>
+        <div class="image-item">
+            <img src="images/alg2.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/training_curve2.png" alt="">
+            Training Loss Curve
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/gen_5.png" alt="">
+            <p>Epoch 5</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/20_gen.png" alt="">
+            <p>Epoch 20</p>
+        </div>
+        
+    </div>
+
+    <h4 class="text">Class Conditioned UNet</h4>
+
+    <p class="text">By incoporating a class condition into the UNet which is retrieved from the labels in the dataset, we can manually set which number from 0 to 9 that should be generated. On top of this, at sampling time, classifier-free guidance is implemented to help create better generations by following algorithm 4 from the DDPM paper.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/alg4.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/cls_loss_curve.png" alt="">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results2/epoch5_cls.png" alt="">
+            <p>Epoch 5 Results</p>
+        </div>
+        <div class="image-item">
+            <img src="results2/20epochs_cls.png" alt="">
+            <p>Epoch 20 Results</p>
+        </div>
+    </div>
+
+    <h2>Bells & Whistles</h2>
+
+    <h4 class="text">Rectified Flow</h4>
+
+    <p class="text">Rectified flow is another paradigm for generative modeling based on flow matching. The main difference between rectified flow (RF) and diffusion is that RF is a transport problem, while diffusion is a denoising task. RF learns to map one distribution to another. In our case for MNIST digit generation, RF learns to transport the gaussian distribution to the distribution of MNIST. Rather than noise an image and learn to denoise it, we can start with samples from gaussian noise and learn to transport it to MNIST. Rectified flow trajectories are also linear, meaning that when we do sampling for training, for any given timestep t, we can simply linearly interpolate between the ground turth and the noise sample to get the true ground truth of the image at that timestep.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/rf.png" alt="">
+            <p>Rectified Flow</p>
+        </div>
+    </div>
+
     
 </body>
 </html>
