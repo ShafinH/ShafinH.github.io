@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio: Project </title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h2>Digital Depth Refocusing and Aperture Adjustment with Light Field Data</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">Lightfield cameras capture a grid of images over a plane orthogonal to the optical axis, capturing a 4D representation of an image, including both the light intensty, and their angles. This additional information allows for various post capture affects such as depth estimation, refocusing, and persepctive shifts. The lightfield camera data is from the <a href="http://lightfield.stanford.edu/lfs.html">Stanford Light Field Archive</a></p>
+    <hr>
+
+    <h2>Digital Refocusing</h2>
+
+    <p class="text">Following <a href="https://graphics.stanford.edu/papers/lfcamera/lfcamera-150dpi.pdf">Ng et al.</a>'s approach on plenoptic cameras, digital refocusing can be done by properly shifting and averaging the sub-aperture images based on their offset from the center of the grid. Choosing how close or far the image should be focused is done by setting an alpha value to scale the shifting.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/alpha_-2.6.png" alt="">
+            <p>alpha = -1.1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/alpha_-1.1.png" alt="">
+            <p>alpha = -1.1</p>
+        </div>
+        <div class="image-item">
+            <img src="results/alpha_-0.5.png" alt="">
+            <p>alpha = -0.5</p>
+        </div>
+        <div class="image-item">
+            <img src="results/alpha_1.0.png" alt="">
+            <p>alpha = 1.0</p>
+        </div>
+        <div class="image-item">
+            <img src="results/alpha_1.9.png" alt="">
+            <p>alpha = 1.9</p>
+        </div>
+        
+    </div>
+
+    <h2>Aperature Adjustment</h2>
+
+    <p class="text">Post capture aperature adjustment is also possible with the plenoptic camera by choosing how many images from the grid you use to average. Averaging over a larger set of images on the grid mimics a camera with a much larger aperature, while averaging less images closer to the center of the grid mimics a smaller aperature. This effect can change various parts of the image, including the depth of field. The images are in order of max distance from the center of the grid.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/aperture_1.png" alt="">
+        </div>
+        <div class="image-item">
+            <img src="results/aperture_5.png" alt="">
+        </div>
+        <div class="image-item">
+            <img src="results/aperture_9.png" alt="">
+        </div>
+        <div class="image-item">
+            <img src="results/aperture_13.png" alt="">
+        </div>
+        <div class="image-item">
+            <img src="results/aperture_17.png" alt="">
+        </div>
+    </div>
+
+    <h2>Summary</h2>
+
+    <p class="text">Plenoptic cameras allow for lightfield photography which capture not only the intensity of light at each point, but also the direction of the light rays. This 4D information allows for powerful digital post-capture processing affects through the shifting and averaging of the sub-aperture images. In this project, it is shown how to computationally refocus the image at various points, as well as mimic the effect of changing the aperture of the camera.</p>
+
+</body>
+</html>
+    
