@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<head>
+    <title>CS 180 Portfolio</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="header">
+        <h2>High Dynamic Range Imaging</h2>
+        <h4 style="text-align: center;">Shafin Haque</h4>
+    </div>
+    <hr>
+    <h2>Overview</h2>
+    <p class="text">Modern cameras are unable to capture the full dynamic range of real-world scenarios. Combining information from multiple exposures of the same scene can allow us to capture high dynamic range photos.</p>
+    <hr>
+    <h2>Radiance Maps</h2>
+    <p class="text">HDR radiance maps can be created from several LDR exposures. This is because a pixel at each image is a function of an unkown scene radiance, integrated over the exposure time. Therefore, we can solve for the radiance by making some base assumptions of the function as well as the natural log of it. The radiance map shows the intensity values at different points in the scene, with lighter areas being more intense, and darker areas being less.</p>
+    <h4 class="text">LDR Exposures</h4>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="images/arch/1_25.jpg" width="400px">
+            <p>1/25s</p>
+        </div>
+        <div class="image-item">
+            <img src="images/arch/1_4.jpg" alt="" width="400px">
+            <p>1/4s</p>
+        </div>
+        <div class="image-item">
+            <img src="images/arch/3_1.jpg" alt="" width="400px">
+            <p>3s</p>
+        </div>
+        <div class="image-item">
+            <img src="images/arch/17_1.jpg" alt="" width="400px">
+            <p>17s</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/Figure_1.png" alt="">
+            <p>Pixel vs Log Exposure</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/hdr_radiance_map_mean.png" alt="">
+            <p class="text">HDR Radiance Map Mean</p>
+        </div>
+        <div class="image-item">
+            <img src="results/hdr_radiance_map.png" alt="">
+            <p class="text">HDR Radiance Map</p>
+        </div>
+    </div>
+
+    <hr>
+    <h2>Tone Mapping</h2>
+    <p class="text">Global tone mapping can be done to show off the image, as the values are not within the typical 0-1 or 0-255 range. Thus, L / (L + 1) provides a global tone mapping to view the image, however, it does a poor job of stretching the full dynamic range. Thus, a simplified <a href="http://people.csail.mit.edu/fredo/PUBLI/Siggraph2002/DurandBilateral.pdf">Durand 2002</a> tone mapping is done to locally tone map the image and show the full dynamic range. The durand tone mapping incorporates calculating the intensity, chrominance channels, bilateral filtering, scaling and reconstructing, as well as gamma compression.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/bilateral.png" alt="">
+            <p>Bilateral Large Scale Structure</p>
+        </div>
+        <div class="image-item">
+            <img src="results/detail.png" alt="">
+            <p>Details</p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/global_scale.png" alt="">
+            <p>Global Scale</p>
+        </div>
+        <div class="image-item">
+            <img src="results/global_simple.png" alt="">
+            <p>Global Simple</p>
+        </div>
+        <div class="image-item">
+            <img src="results/durand.png" alt="">
+            <p>Durand Local</p>
+        </div>
+    </div>
+
+    <hr>
+    <h2>More Results</h2>
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/bonsai/global_simple.png" alt="">
+            <p>Global Simple</p>
+        </div>
+        <div class="image-item">
+            <img src="results/bonsai/durand.png" alt="">
+            Durand
+        </div>
+        <div class="image-item">
+            <img src="results/chapel/global_simple.png" alt="">
+            <p>Global Simple</p>
+        </div>
+        <div class="image-item">
+            <img src="results/chapel/durand.png" alt="">
+            <p>Durand</p>
+        </div>
+    </div>
+
+    <hr>
+    <h2>Bells & Whistles</h2>
+    <p class="text">However, some of the LDR exposures are unaligned, and lead to poor results without aligning them. However, aligning can be a challenge becuase the images are taken at different exposures and have very different lighting. I used OpenCV's find Enhanced Correlation Coefficient method to generate a perspective warp for each image from the middle exposure.</p>
+
+    <div class="image-container">
+        <div class="image-item">
+            <img src="results/bw/durand_before.png" alt="">
+            <p>No Alignment</p>
+        </div>
+        <div class="image-item">
+            <img src="results/bw/durand_after.png" alt="">
+            <p>Alignment</p>
+        </div>
+        <div class="image-item">
+            <img src="results/bw/durand_house_before.png" alt="">
+            <p>No Alignment</p>
+        </div>
+        <div class="image-item">
+            <img src="results/bw/durand_house_after.png" alt="">
+            <p>Alignment</p>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
+    
